@@ -276,7 +276,7 @@ class chrome {
 class user {
 	exec {
 		"add-developer-user":
-			command => "/usr/sbin/useradd developer -m -p elask0++ -g sudo",
+			command => "/usr/sbin/useradd developer -m -p PASSWORD -g sudo",
       creates => '/home/developer'
 	}
 }

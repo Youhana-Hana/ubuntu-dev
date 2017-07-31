@@ -37,7 +37,7 @@ class othertools {
     }
 }
 
-class node-js {
+class nodejs {
 	exec { 
 		"get-nave":
 			command => "/usr/bin/git clone https://github.com/isaacs/nave.git /usr/local/src/nave",
@@ -281,12 +281,20 @@ class user {
 	}
 }
 
+class tmux {
+	package {
+		"tmux":
+			ensure => latest,
+        require => Exec["aptGetUpdate"]
+	} 
+}
+
 $homedir = "/home/developer"
 
 include apt_update
-include user
+include tmux
 include othertools
-include node-js
+include nodejs
 include java
 include emacs
 include idea

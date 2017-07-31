@@ -12,9 +12,10 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "dev"
-  config.vm.hostname = "ubuntu-dev"
-  config.vm.box = "box-cutter/ubuntu1404-desktop"
+  config.vm.box = "dev-001"
+  config.vm.hostname = "ubuntu-dev-001"
+  config.vm.box = "Ubuntu-17.04-64-Desktop"
+  # config.vm.box = "box-cutter/ubuntu1404-desktop"
 
   config.vm.network :forwarded_port, guest: 80, host: 8081, auto_correct: true
   config.vm.network :forwarded_port, guest: 3000, host: 3000, auto_correct: true
@@ -37,9 +38,9 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision :puppet do |puppet|
-    puppet.manifests_path = "puppet/manifests"
+    puppet.environment_path = "environments"
+    puppet.environment = "dev"
     puppet.module_path    = "puppet/modules"
-    puppet.manifest_file  = "main.pp"
     puppet.options        = [
       '--verbose',
       #'--debug',

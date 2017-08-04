@@ -276,7 +276,7 @@ class chrome {
 class user {
 	exec {
 		"add-developer-user":
-			command => "/usr/sbin/useradd developer -m -p PASSWORD -g sudo",
+			command => "/usr/sbin/useradd developer -m -p elask0++ -g sudo",
       creates => '/home/developer'
 	}
 }
@@ -289,10 +289,60 @@ class tmux {
 	} 
 }
 
+class docker {
+      exec { "allow-apt-get-https":
+      command => "/usr/bin/apt-get install -y --no-install-recommends apt-transport-https ca-certificates curl software-properties-common libappindicator1",
+      require => Exec["aptGetUpdate"]
+}
+  exec { "add-docker-gpg":
+  command => "/usr/bin/curl -fsSL https://apt.dockerproject.org/gpg | /usr/bin/apt-key add -",
+  require => Exec["allow-apt-get-https"]
+}
+
+exec { "add-docker-repo":
+     command => "/usr/bin/add-apt-repository \"deb https://apt.dockerproject.org/repo/ ubuntu-$(lsb_release -cs) main\"",
+     require => Exec["add-docker-gpg"]
+}
+
+exec { "docker-system-packages-update":
+     command => "/usr/bin/apt-get update",
+     require => Exec["add-docker-repo"]
+     }
+     
+     exec { "get-docker-compose":
+     command => '/usr/bin/curl -L "https://github.com/docker/compose/releases/download/1.11.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose',
+     require => Exec["allow-apt-get-https"]
+        }
+
+  
+	file { '/usr/local/bin/docker-compose':
+  ensure => present,
+  owner => developer,
+  mode => '0755',
+  require => Exec["get-docker-compose"]
+  }
+	package { 
+		"docker-engine":
+			ensure => latest,
+			require => Exec['docker-system-packages-update'],
+	}
+
+exec { "add-docker-user-group"
+command => "/usr/sbin/groupadd docker -f",
+require => Package["docker-engine"]
+}
+
+exec { "unsudo-docker":
+command => "/usr/sbin/gpasswd -a developer docker && /usr/bin/newgrp docker",
+require => Exec["add-docker-user-group"]
+}
+}
+
 $homedir = "/home/developer"
 
 include apt_update
 include tmux
+include docker
 include othertools
 include nodejs
 include java

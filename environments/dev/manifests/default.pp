@@ -221,6 +221,11 @@ class emacs {
     user => developer,
     creates => '/home/developer/.ssh/id_rsa.pub'
   }
+  
+  exec { 'add-ssh':
+    command => '/usr/bin/ssh-add $homedir/.ssh/id_rsa',
+    user => developer
+  }
 }
 
 class pcf {
@@ -327,7 +332,7 @@ exec { "docker-system-packages-update":
 			require => Exec['docker-system-packages-update'],
 	}
 
-exec { "add-docker-user-group"
+exec { "add-docker-user-group":
 command => "/usr/sbin/groupadd docker -f",
 require => Package["docker-engine"]
 }

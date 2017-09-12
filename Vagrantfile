@@ -12,10 +12,8 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "dev-001"
   config.vm.hostname = "ubuntu-dev-001"
   config.vm.box = "Ubuntu-17.04-64-Desktop"
-  # config.vm.box = "box-cutter/ubuntu1404-desktop"
 
   config.vm.network :forwarded_port, guest: 80, host: 8081, auto_correct: true
   config.vm.network :forwarded_port, guest: 3000, host: 3000, auto_correct: true
@@ -34,7 +32,7 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--monitorcount", "1"]
     vb.customize ["modifyvm", :id, "--accelerate3d", "off"]
     vb.cpus = 2
-    vb.memory = 8192
+    vb.memory = 4096
   end
 
   config.vm.provision :puppet do |puppet|
